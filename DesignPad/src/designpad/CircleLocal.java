@@ -32,6 +32,9 @@ public class CircleLocal implements Shape, Serializable{
     private Double y;
     private Double width;
     private Double height;
+    private boolean selected;
+    private int offSetX;
+    private int offSetY;
     
     public CircleLocal(){
         firstPoint2D = new Point2D.Double(0,0);
@@ -69,6 +72,24 @@ public class CircleLocal implements Shape, Serializable{
         this.secondPoint2D.setY(y2);
     }
     */
+    
+    public void setSelectedTrue() {
+    		selected=true;
+    }
+    
+    public void setSelectedFalse() {
+    		selected=false;
+    }
+    
+    public void setX(Double x) {
+    		this.x=x;
+    }
+    
+    public void setY(Double y) {
+    		this.y=y; 
+    }
+    
+    
     public String getShapeType(){
         return this.shapeType;
     }

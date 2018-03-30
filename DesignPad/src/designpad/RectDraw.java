@@ -7,12 +7,17 @@ package designpad;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.awt.event.MouseEvent;
 
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 
@@ -51,6 +56,8 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
     private double currentZoom;
     private double zoomFactor;
     private double scaleFactor;
+    private double prevScaleFactor;
+    private double zoomRatio;
     
    
     public RectDraw(Point2D startPoint, Point2D endPoint){
@@ -68,6 +75,7 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
        zoomFactor = 1;
        currentZoom = 1;
        scaleFactor = 1;
+       zoomRatio=1;
        
     }
     
@@ -83,6 +91,7 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
         zoomFactor = 1;
         currentZoom = 1;
         scaleFactor = 1;
+        zoomRatio = 1;
         
     }
     
@@ -116,6 +125,7 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
     	
     }
     
+    
     public void addPoints(Point2D startPoint, Point2D endPoint){
         this.startPoint=null;
        this.endPoint=null;
@@ -135,25 +145,26 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
     	
     }
     public void setZoomFactor(double zoomFactor) {
-    	this.zoomFactor = zoomFactor;
+    	scaleFactor = zoomFactor;
     }
     
-    public void clacDeltaZoom() {
-    	scaleFactor = zoomFactor/currentZoom;
+    public void zoomIn(double zoom) {
+    	scaleFactor=zoom;
     }
     
-    public void zoomIn() {
-    	scaleFactor=1.25;
-    	currentZoom*=1.25;
-    }
-    
-    public void zoomOut() {
-    	scaleFactor=0.75;
-    	currentZoom*=0.75;
+    public void zoomOut(double zoom) {
+    	scaleFactor=zoom;
     }
     protected void paintComponent(Graphics g) {
     	 
     	Graphics2D g2d = (Graphics2D)g;
+    	g2d.scale(scaleFactor, scaleFactor);
+    	setSize((int)(this.getWidth()*scaleFactor),(int)(this.getHeight()*scaleFactor));
+    	validate();
+    	
+        
+    	
+    	super.paintComponent(g);
     	if(undoRedo.getState()==true) {
     		undoRedo.noted();
     	}
@@ -210,31 +221,30 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
         
         
         
-    	g2d.scale(scaleFactor, scaleFactor);
-    	setSize((int)(this.getWidth()*scaleFactor),(int)(this.getHeight()*scaleFactor));
-    	validate();
     	
-        
-    	
-    	super.paintComponent(g);
-        //repaint();
+        repaint();
                 
                 
     }
+    
+    public void scaleMultiplier(double ratio) {
+    		zoomRatio=ratio;
+    }
+    
     @Override
 	public void mouseDragged(java.awt.event.MouseEvent me) {
 		if (currentMode == currentMode.curve) {
             if (control1 == true ) {
-                mouseControlPoint1X = me.getX(); //Step 2: Get first mouse Control Point.
-                mouseControlPoint1Y = me.getY();
+                mouseControlPoint1X = me.getX()*zoomRatio; //Step 2: Get first mouse Control Point.
+                mouseControlPoint1Y = me.getY()*zoomRatio;
             }
             else if (control1 == false) {
-            	mouseControlPoint3X = me.getX(); //Step 4 and 10: Get control points 3.
-                mouseControlPoint3Y = me.getY(); 
+            	mouseControlPoint3X = me.getX()*zoomRatio; //Step 4 and 10: Get control points 3.
+                mouseControlPoint3Y = me.getY()*zoomRatio; 
             }
         } else {
-            mouseEndPointX = me.getX();
-            mouseEndPointY = me.getY();
+            mouseEndPointX = me.getX()/scaleFactor;
+            mouseEndPointY = me.getY()/scaleFactor;
         }
         
         
@@ -248,12 +258,12 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
 	public void mousePressed(MouseEvent me) {
 		if (currentMode == currentMode.curve) {
             if (control1 == true) {
-                mouseStartPointX = me.getX(); // Step 1: First press recorded.
-                mouseStartPointY = me.getY();
+                mouseStartPointX = me.getX()*zoomRatio; // Step 1: First press recorded.
+                mouseStartPointY = me.getY()*zoomRatio;
 
             } else {
-                mouseEndPointX = me.getX(); // Step 3 and 9: Second point recorded.
-                mouseEndPointY = me.getY();
+                mouseEndPointX = me.getX()*zoomRatio; // Step 3 and 9: Second point recorded.
+                mouseEndPointY = me.getY()*zoomRatio;
                 
             }
         } else {
@@ -264,8 +274,8 @@ public class RectDraw extends JPanel implements MouseListener, MouseMotionListen
         	else {
         		control2 = true;
         	}
-            mouseStartPointX = me.getX();
-            mouseStartPointY = me.getY();
+            mouseStartPointX = me.getX()/scaleFactor;
+            mouseStartPointY = me.getY()/scaleFactor;
         }
 		
 		

@@ -27,6 +27,7 @@ public class RectangleLocal implements Shape, Serializable {
 	private static final String shapeType = "Rectangle";
     private Point2D firstPoint2D;
     private Point2D secondPoint2D;
+    private boolean selected;
     
     public RectangleLocal(){
         firstPoint2D = new Point2D.Double(0,0);
@@ -70,6 +71,22 @@ public class RectangleLocal implements Shape, Serializable {
     
     public void setPoint2DSecond(Point2D p2D){
         secondPoint2D = p2D;
+    }
+    
+    public void setX(Double x) {
+		firstPoint2D.setLocation(x, firstPoint2D.getY());
+    }
+
+    public void setY(Double y) {
+    		firstPoint2D.setLocation(firstPoint2D.getX(), y);
+    }
+    
+    public void setSelectedTrue() {
+    		selected=true;
+    }
+    
+    public void setSelectedFalse() {
+    		selected=false;
     }
     
     public String getShapeType(){

@@ -16,6 +16,9 @@ public interface Shape {
     
     public String getShapeType();
     
+    public void setSelectedTrue();
+    public void setSelectedFalse();
+    
     public void setPoint2DFirst(Point2D firstPoint);
     public void setPoint2DSecond(Point2D secondPoint);
     public void draw(Graphics2D g2d);

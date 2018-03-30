@@ -31,6 +31,7 @@ public class OvalLocal implements Shape, Serializable{
     private Double y;
     private Double width;
     private Double height;
+    private boolean selected;
     
     public OvalLocal(){
         firstPoint2D = new Point2D.Double(0,0);
@@ -50,6 +51,22 @@ public class OvalLocal implements Shape, Serializable{
         this.firstPoint2D.setLocation(p1);
         this.secondPoint2D.setLocation(p2);
     }
+    
+    public void setSelectedTrue() {
+    		selected=true;
+    }
+    public void setSelectedFalse() {
+    		selected=false;
+    }
+    
+    public void setX(Double x) {
+		this.x=x;
+    }
+
+    public void setY(Double y) {
+		this.y=y;
+    }
+    
     /*
     public void setXFirstPoint2D(double x1){
         this.firstPoint2D.setX(x1);
@@ -82,6 +99,8 @@ public class OvalLocal implements Shape, Serializable{
     public void setCenterPoint(){
        centerPoint.setLocation((firstPoint2D.getX()+secondPoint2D.getX())/2, (firstPoint2D.getY()+secondPoint2D.getY())/2);
     }
+    
+    
     
     public void draw(Graphics2D g){
         

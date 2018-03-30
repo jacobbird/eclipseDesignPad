@@ -6,6 +6,7 @@
 package designpad;
 
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -69,6 +70,7 @@ import java.awt.event.*;
 import java.util.Optional;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -96,6 +98,11 @@ public class DesignPad extends Application {
     private JScrollPane s;
     private UndoRedo undoRedo;
     private String currentFile;
+    private int scrollXVal;
+    private int scrollYVal;
+    private SwingNode swingNode;
+    private double zoom;
+    private double oldZoom;
     /*public void start(Stage primaryStage){
         Pane canvas = new Pane();
         RectangleLocal rl = new RectangleLocal();
@@ -116,25 +123,52 @@ public class DesignPad extends Application {
     	tf.setVisible(false);
     }
     
-    
-    
-    @Override
-    public void start(Stage primaryStage) {
-        MyPanel panel = new MyPanel();
-        SwingNode swingNode = new SwingNode();
+    public DesignPad() {
+    	swingNode = new SwingNode();
         startPoint = new Point2D(0,0);
         endPoint = new Point2D(0,0);
         undoRedo = new UndoRedo();
         cCurveLocalS=new CubicCurveLocalShape();
         drawing = new Drawing();
         control1 = true;
-        
+        oldZoom = 1;
+        zoom = 1;
         
         r = new RectDraw();
-        r.setPreferredSize(new Dimension(600,600));
+        r.setPreferredSize(new Dimension(12000,12000));
         r.setUndoRedo(undoRedo);
         r.setBackground(java.awt.Color.WHITE);
         JTextField tf = new JTextField("Start a new File or Open an Existing One");
+        s = new JScrollPane(r);
+        JScrollBar hbar=new JScrollBar(JScrollBar.HORIZONTAL);
+        JScrollBar vbar=new JScrollBar(JScrollBar.VERTICAL);
+        s.setHorizontalScrollBar(hbar);
+        s.setVerticalScrollBar(vbar);
+        s.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        s.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        hbar.addAdjustmentListener(new AdjustmentListener() {
+        	
+        		public void adjustmentValueChanged(AdjustmentEvent ae) {
+        			scrollXVal=ae.getValue()+s.getWidth()/2;
+        		}
+        	
+        });
+        
+        vbar.addAdjustmentListener(new AdjustmentListener() {
+        	
+    		public void adjustmentValueChanged(AdjustmentEvent ae) {
+    			scrollYVal=ae.getValue()+s.getHeight()/2;
+    		}
+    	
+    });
+        
+        createAndSetSwingContent(swingNode);
+    }
+    
+    @Override
+    public void start(Stage primaryStage) {
+        MyPanel panel = new MyPanel();
         
         
         
@@ -168,7 +202,7 @@ public class DesignPad extends Application {
                     entered = result.get();
                 }
                 currentFile = file.getAbsolutePath()+"/"+entered+".dp";
-                tf.setVisible(false);
+               
                 
             }
 
@@ -207,7 +241,7 @@ public class DesignPad extends Application {
 					Drawing d = undoRedo.getCurrent();
             		r.resetDrawing(d);
 					in.close();
-					tf.setVisible(false);
+					
 				} catch (FileNotFoundException e) {
 					Alert alert = new Alert(AlertType.INFORMATION);
 					alert.setTitle("File not found");
@@ -232,7 +266,10 @@ public class DesignPad extends Application {
         exportMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+            
+            
+            
+            	
             }
 
         });
@@ -321,8 +358,14 @@ public class DesignPad extends Application {
         zoomInMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            	r.zoomIn();
-            }
+            	oldZoom = zoom;
+            	zoom+=.25;
+            	r.zoomIn(zoom);
+            	scrollHelper();
+            	r.scaleMultiplier(zoom/oldZoom);
+            }	
+            	
+            
 
         });
 
@@ -330,7 +373,11 @@ public class DesignPad extends Application {
         zoomOutMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            	r.zoomOut();
+            	oldZoom = zoom;
+            	zoom-=.25;
+            	r.zoomOut(zoom);
+            	scrollHelper();
+            	r.scaleMultiplier(zoom/oldZoom);
             }
 
         });
@@ -339,8 +386,11 @@ public class DesignPad extends Application {
         fiftyMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            	r.setZoomFactor((float) 0.5);
-            	r.clacDeltaZoom();
+            	r.setZoomFactor(0.5);
+            	oldZoom = zoom;
+            	zoom=0.5;
+            	scrollHelper();
+            	r.scaleMultiplier(zoom/oldZoom);
             }
 
         });
@@ -349,8 +399,11 @@ public class DesignPad extends Application {
         seventyFiveMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            	r.setZoomFactor((float) 0.75);
-            	r.clacDeltaZoom();
+            	r.setZoomFactor(0.75);
+            	oldZoom = zoom;
+            	zoom=0.75;
+            	scrollHelper();
+            	r.scaleMultiplier(zoom/oldZoom);
             }
 
         });
@@ -359,8 +412,11 @@ public class DesignPad extends Application {
         oneHundredMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            	r.setZoomFactor((float) 1.0);
-            	r.clacDeltaZoom();
+            	r.setZoomFactor(1.0);
+            	oldZoom = zoom;
+            	zoom=1.0;
+        		scrollHelper();
+        		r.scaleMultiplier(zoom/oldZoom);
             }
 
         });
@@ -369,8 +425,11 @@ public class DesignPad extends Application {
         oneFiftyMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            	r.setZoomFactor((float) 1.5);
-            	r.clacDeltaZoom();
+            	r.setZoomFactor(1.5);
+            	oldZoom = zoom;
+            	zoom=1.5;
+            	scrollHelper();
+            	r.scaleMultiplier(zoom/oldZoom);
             }
 
         });
@@ -511,17 +570,6 @@ public class DesignPad extends Application {
         
         SwingNode swingNode2 = new SwingNode();
         
-   
-        s = new JScrollPane(r);
-        JScrollBar hbar=new JScrollBar(JScrollBar.HORIZONTAL);
-        JScrollBar vbar=new JScrollBar(JScrollBar.VERTICAL);
-        s.setHorizontalScrollBar(hbar);
-        s.setVerticalScrollBar(vbar);
-        s.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        s.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-               
-        createAndSetSwingContent(swingNode);
-        
 
         bp2.setCenter(swingNode);
         final Duration oneFrameAmt = Duration.millis(100);
@@ -606,6 +654,19 @@ public class DesignPad extends Application {
             }
         }*/
     
+    	private void scrollHelper() {
+    		
+    		java.awt.Rectangle oldView = s.getViewport().getViewRect();
+    		
+    		// calculate the new view position
+    		java.awt.Point newViewPos = new java.awt.Point();
+    		newViewPos.x = (int) Math.max(0, (oldView.x + oldView.width / 2) * zoom / oldZoom - oldView.width / 2);
+    		newViewPos.y = (int) Math.max(0, (oldView.y + oldView.height / 2) * zoom / oldZoom - oldView.height / 2);
+    		s.getViewport().setViewPosition(newViewPos);
+    		
+    		
+    	}
+    
      private void BringToFront() {
                     java.awt.EventQueue.invokeLater(new Runnable() {
                         @Override
@@ -653,6 +714,5 @@ public class DesignPad extends Application {
         }
     }
 
-	
 
 }

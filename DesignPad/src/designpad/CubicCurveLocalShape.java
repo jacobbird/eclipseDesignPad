@@ -27,11 +27,11 @@ public class CubicCurveLocalShape implements Shape, Serializable {
     private Stack<CCurveLocal> cCArray;
 	private Point2D firstPoint2D;
 	private Point2D secondPoint2D;
+	private boolean selected;
     
     CubicCurveLocalShape(){
         cCArray = new Stack<CCurveLocal>();
     }
-    
     
     public int count(){
         return cCArray.size();
@@ -43,6 +43,14 @@ public class CubicCurveLocalShape implements Shape, Serializable {
     
     public String getShapeType(){
         return this.shapeType;
+    }
+    
+    public void setSelectedTrue() {
+    		selected=true;
+    }
+    
+    public void setSelectedFalse() {
+    		selected=false;
     }
     
     public void addCurve(CCurveLocal cCL){
