@@ -8,7 +8,7 @@ package designpad;
 import java.awt.Graphics2D;
 import java.util.Iterator;
 import java.util.Stack;
-
+import java.util.Vector;
 import java.awt.geom.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.CubicCurve;
@@ -27,11 +27,25 @@ public class CubicCurveLocalShape implements Shape, Serializable {
     private Stack<CCurveLocal> cCArray;
 	private Point2D firstPoint2D;
 	private Point2D secondPoint2D;
+	private boolean selected;
+	private Point2D point;
+	private Vector<Point2D> points;
     
     CubicCurveLocalShape(){
         cCArray = new Stack<CCurveLocal>();
     }
     
+    public void setX(Double mouseX) {
+    	
+    }
+    
+    public void setY(Double mouseY) {
+    	
+    }
+    
+    public Vector<Point2D> pointsOnShape(){
+    		return points;
+    }
     
     public int count(){
         return cCArray.size();
@@ -43,6 +57,14 @@ public class CubicCurveLocalShape implements Shape, Serializable {
     
     public String getShapeType(){
         return this.shapeType;
+    }
+    
+    public void setSelectedTrue() {
+    		selected=true;
+    }
+    
+    public void setSelectedFalse() {
+    		selected=false;
     }
     
     public void addCurve(CCurveLocal cCL){

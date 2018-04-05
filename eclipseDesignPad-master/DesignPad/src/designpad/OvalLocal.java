@@ -7,6 +7,7 @@ package designpad;
 
 import java.awt.Graphics2D;
 import java.io.Serializable;
+import java.util.Vector;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import javafx.scene.layout.Pane;
@@ -31,6 +32,10 @@ public class OvalLocal implements Shape, Serializable{
     private Double y;
     private Double width;
     private Double height;
+    private boolean selected;
+    private Ellipse2D ellipse;
+    private Vector<Point2D> points;
+    private Point2D point;
     
     public OvalLocal(){
         firstPoint2D = new Point2D.Double(0,0);
@@ -50,6 +55,31 @@ public class OvalLocal implements Shape, Serializable{
         this.firstPoint2D.setLocation(p1);
         this.secondPoint2D.setLocation(p2);
     }
+    
+    public void setSelectedTrue() {
+    		selected=true;
+    }
+    public void setSelectedFalse() {
+    		selected=false;
+    }
+    
+    public void setX(Double x) {
+		this.x=x;
+    }
+
+    public void setY(Double y) {
+		this.y=y;
+    }
+    
+    public Vector<Point2D> pointsOnShape(){
+    		if(ellipse!=null) {
+    		for(double t=0; t<=(2*Math.PI); t=t+.0000001)
+    			x = x+(width/2*Math.cos(t)); 
+    			y = y+(height/2*Math.sin(2));
+    		}
+    		return points;
+    }
+    
     /*
     public void setXFirstPoint2D(double x1){
         this.firstPoint2D.setX(x1);
@@ -83,6 +113,8 @@ public class OvalLocal implements Shape, Serializable{
        centerPoint.setLocation((firstPoint2D.getX()+secondPoint2D.getX())/2, (firstPoint2D.getY()+secondPoint2D.getY())/2);
     }
     
+    
+    
     public void draw(Graphics2D g){
         
         if(((this.secondPoint2D.getX()-this.firstPoint2D.getX())<0)&&((this.secondPoint2D.getY()-this.firstPoint2D.getY())<0)){
@@ -112,7 +144,9 @@ public class OvalLocal implements Shape, Serializable{
             
         //java.awt.Rectangle rect = new java.awt.Rectangle((int)startPoint.getX(),(int)startPoint.getY(),(int)endPoint.getX()-(int)startPoint.getX(),(int)endPoint.getY()-(int)startPoint.getY());
         //java.awt.Rectangle rect = new java.awt.Rectangle(100,100,100,100);
-        g.draw(new Ellipse2D.Double(x,y,width,height));       
+        ellipse = new Ellipse2D.Double(x,y,width,height);
+        
+        g.draw(ellipse);       
         
     }
 

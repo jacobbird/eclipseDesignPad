@@ -7,7 +7,7 @@ package designpad;
 
 import java.awt.Graphics2D;
 import java.io.Serializable;
-
+import java.util.Vector;
 import java.awt.geom.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -24,6 +24,13 @@ public class SquareLocal implements Shape, Serializable {
 	private static final String shapeType = "Square";
     private Point2D firstPoint2D;
     private Point2D secondPoint2D;
+    private boolean selected;
+    private int width;
+    private int height;
+    private int x;
+    private int y;
+    private Point2D point;
+    private Vector<Point2D> points;
     
     public SquareLocal(){
         firstPoint2D = new Point2D.Double(0,0);
@@ -48,6 +55,40 @@ public class SquareLocal implements Shape, Serializable {
     
     public void setPoint2DSecond(Point2D p2D){
         secondPoint2D = p2D;
+    }
+    
+    public void setX(Double x) {
+		firstPoint2D.setLocation(x, firstPoint2D.getY());
+		
+    }
+
+    public void setY(Double y) {
+    		firstPoint2D.setLocation(firstPoint2D.getX(), y);
+    }
+    
+    public void setWidthHeight(Double width, Double height) {
+    		secondPoint2D.setLocation(firstPoint2D.getX()+width, firstPoint2D.getY()+height);
+    }
+    
+    public Vector<Point2D> pointsOnShape() {
+		
+    	
+		for(int x1=x; x1<x+width; x1++) {
+			
+		}
+		
+		for(int x1=y; x1<y+height; x1++) {
+			
+		}
+		return points;
+}
+    
+    public void setSelectedFalse() {
+    		selected=false;
+    }
+    
+    public void setSelectedTrue() {
+    		selected=true;
     }
     
     public void squarePoints() {
@@ -87,31 +128,34 @@ public class SquareLocal implements Shape, Serializable {
         
         if(((this.secondPoint2D.getX()-this.firstPoint2D.getX())<0)&&((this.secondPoint2D.getY()-this.firstPoint2D.getY())<0)){
            
-            rect.x=(int)this.secondPoint2D.getX();
-            rect.y=(int)(this.firstPoint2D.getY()-(this.firstPoint2D.getX()-this.secondPoint2D.getX()));
-            rect.width=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX()); 
-            rect.height=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX());
+            x=(int)this.secondPoint2D.getX();
+            y=(int)(this.firstPoint2D.getY()-(this.firstPoint2D.getX()-this.secondPoint2D.getX()));
+            width=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX()); 
+            height=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX());
            
         }
         else if (this.secondPoint2D.getX()-this.firstPoint2D.getX()<0){
-        	rect.x=(int)this.secondPoint2D.getX();
-        	rect.y=(int)this.firstPoint2D.getY();
-        	rect.width=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX()); 
-        	rect.height=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX());
+        x=(int)this.secondPoint2D.getX();
+        	y=(int)this.firstPoint2D.getY();
+        	width=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX()); 
+        	height=(int)(this.firstPoint2D.getX()-this.secondPoint2D.getX());
         }
         else if(this.secondPoint2D.getY()-this.firstPoint2D.getY()<0){
-        	rect.x=(int)this.firstPoint2D.getX();
-        	rect.y=(int)(this.firstPoint2D.getY()-(this.secondPoint2D.getX()-this.firstPoint2D.getX()));
-        	rect.width=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX()); 
-        	rect.height=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX());
+        x=(int)this.firstPoint2D.getX();
+        	y=(int)(this.firstPoint2D.getY()-(this.secondPoint2D.getX()-this.firstPoint2D.getX()));
+        	width=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX()); 
+        	height=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX());
         }
         else{
-            rect.x=(int)(this.firstPoint2D.getX());
-            rect.y=(int)(this.firstPoint2D.getY());
-            rect.width=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX()); 
-            rect.height=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX());
+            x=(int)(this.firstPoint2D.getX());
+            y=(int)(this.firstPoint2D.getY());
+            width=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX()); 
+            height=(int)(this.secondPoint2D.getX()-this.firstPoint2D.getX());
         }
-            
+        rect.x=x;
+        rect.y=y;
+        rect.width=width;
+        rect.height=height;
         //java.awt.Rectangle rect = new java.awt.Rectangle((int)startPoint.getX(),(int)startPoint.getY(),(int)endPoint.getX()-(int)startPoint.getX(),(int)endPoint.getY()-(int)startPoint.getY());
         //java.awt.Rectangle rect = new java.awt.Rectangle(100,100,100,100);
         g.draw(rect);       

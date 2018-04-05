@@ -8,6 +8,7 @@ package designpad;
 import java.awt.Graphics2D;
 
 import java.awt.geom.Point2D;
+import java.util.Vector;
 /**
  *
  * @author Jacob
@@ -16,6 +17,11 @@ public interface Shape {
     
     public String getShapeType();
     
+    public void setSelectedTrue();
+    public void setSelectedFalse();
+    public void setX(Double mouseX);
+    public void setY(Double mouseY);
+    public Vector<Point2D> pointsOnShape();
     public void setPoint2DFirst(Point2D firstPoint);
     public void setPoint2DSecond(Point2D secondPoint);
     public void draw(Graphics2D g2d);

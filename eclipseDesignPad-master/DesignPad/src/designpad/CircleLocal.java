@@ -8,10 +8,12 @@ package designpad;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import java.io.Serializable;
+import java.util.Vector;
 import java.awt.geom.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import javafx.util.Pair;
 
 /**
  *
@@ -32,6 +34,9 @@ public class CircleLocal implements Shape, Serializable{
     private Double y;
     private Double width;
     private Double height;
+    private boolean selected;
+    private Vector<Point2D> points;
+    private Point2D point;
     
     public CircleLocal(){
         firstPoint2D = new Point2D.Double(0,0);
@@ -45,6 +50,27 @@ public class CircleLocal implements Shape, Serializable{
         this.secondPoint2D.setLocation(x2,y2);
         
     }
+    
+    public Vector<Point2D> pointsOnShape() {
+    		double h = centerPoint.getX();
+    		double k = centerPoint.getY();
+    		double r = Math.abs(x-h);  
+    		for(double t = 0; t<2*Math.PI; t=t+.000000000001) {
+    			double x = r*Math.cos(t) + h;
+    			double y = r*Math.sin(t) + k;
+    			point.setLocation(x, y);
+    			points.add(point);
+    			point.setLocation(x+1, y+1);
+    			points.add(point);
+    			point.setLocation(x-1, y-1);
+    			points.add(point);
+    		}
+    		
+    		return points;
+    		
+    }
+    
+    
     /*
     public CircleLocal(Point2D p1, Point2D p2){
         firstPoint2D = new Point2D(0,0);
@@ -69,6 +95,26 @@ public class CircleLocal implements Shape, Serializable{
         this.secondPoint2D.setY(y2);
     }
     */
+    
+    public void setSelectedTrue() {
+    		selected=true;
+    }
+    
+    public void setSelectedFalse() {
+    		selected=false;
+    }
+    
+    public void setX(Double mouseX) {
+    		double deltaX = mouseX-this.x;
+    		double x = mouseX - deltaX;
+    }
+    
+    public void setY(Double mouseY) {
+    		double deltaY = mouseY - this.x;
+    		double y = mouseY - deltaY;
+    }
+    
+    
     public String getShapeType(){
         return this.shapeType;
     }
